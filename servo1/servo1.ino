@@ -38,12 +38,12 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define USMAX  4*SERVOMAX // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
-#define MAX_X 100
-#define MAX_Y 100
+#define MAX_X 500
+#define MAX_Y 300
 #define MAX_Z 100
-#define MIN_X 0
-#define MIN_Y 0
-#define MIN_Z 0
+#define MIN_X 100
+#define MIN_Y 100
+#define MIN_Z 30
 
 
 // our servo # counter
@@ -88,27 +88,56 @@ int gripper_old = 0;
 void loop() {
   char serial[20];
  // String test = "100,75,100";
+
+  int x = 0;
+  int y = 0;
+  int z = 0;
+
  if(Serial.available() > 0) {
-  String test = Serial.readString();
- 
+  char c[2];
+  Serial.readBytes(serial, 12);
+//  
+//  c[0] = serial[0];
+//  c[1] = serial[1];
+//  c[2] = serial[2];
+//  
+//  int index = 0;
+//  char c = serial[0:2];
+//  char d = serial[4:6];
+//  Serial.print(serial[0]);
+//    Serial.print(serial[1]);
+//    Serial.print(serial[2]);
+   c[0] = serial[0];
+   c[1] = serial[1];
+  c[2] = serial[2];
+  
+  int x = (c[0]-'0')*100 + (c[1]-'0')*10 + (c[2]-'0')*1;
+  int y = (serial[4]-'0')*100 + (serial[5]-'0')*10 + (serial[6]-'0')*1;
+  int z = (serial[8]-'0')*100 + (serial[9]-'0')*10 + (serial[10]-'0')*1;
+  Serial.println(x);
+    Serial.println(y);
+  Serial.println(z);
 
-  Serial.println("hello");
 
 
-  test.toCharArray(serial, test.length()+1);
+//  Serial.println("hello");
+
+//  Serial.println(serial);
+
+//  test.toCharArray(serial, test.length()+1);
 
  }
-  Serial.println(serial);
+//  Serial.println(serial);
   
-  int x = (int)(strtok(serial,","))[0]-'0';
-  int y = (int)(strtok(NULL,","))[0]-'0';
-  int z = (int)(strtok(NULL,","))[0]-'0';
+//  x = (int)(strtok(serial,","))[0]-'0';
+//  y = (int)(strtok(NULL,","))[0]-'0';
+//  z = (int)(strtok(NULL,","))[0]-'0';
 
-  if (x < 0 || y < 0 || z < 0) {
-    x = 0;
-    y = 0;
-    z = 0;
-  }
+//  if (x < 0 || y < 0 || z < 0) {
+//    x = 0;
+//    y = 0;
+//    z = 0;
+//  }
 
 //  Serial.println(x);
 //  Serial.println(y);
@@ -123,15 +152,21 @@ void loop() {
 //int y = 50;
 //int z = 50;
 
-  int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
-  int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
-  int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
-
+//  int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
+//  int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
+//  int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
+//  
 //  Serial.println(gripper);
-  
+//    Serial.println(yaw);
+//  Serial.println(pitch);
+//  Serial.println(x);
+//    Serial.println(y);
+//  Serial.println(z);
+
+
   // Drive each servo one at a time using setPWM()
   //Serial.println(servonum);
-  
+//  
 //  servonum = 5;
 //  if(gripper_old < gripper){
 //    for(int i = gripper_old; i < gripper; i ++) 
@@ -179,17 +214,17 @@ void loop() {
 //      delay(3);
 //    }
 //  }
-  
-  servonum = 1;
-  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
-  
-  servonum = 3;
-  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
-
-  
-  yaw_old = yaw;
-  pitch_old = pitch;
-  gripper_old = gripper;
+//  
+//  servonum = 1;
+//  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+//  
+//  servonum = 3;
+//  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+//
+//  
+//  yaw_old = yaw;
+//  pitch_old = pitch;
+//  gripper_old = gripper;
 }
 
 /*
