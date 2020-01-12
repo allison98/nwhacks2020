@@ -7,6 +7,8 @@ import argparse
 import cv2
 import imutils
 import time
+import serial
+
 
 class relativeMovement:
 	def __init__(self): 
@@ -17,21 +19,31 @@ class relativeMovement:
 		self.xpast = 0
 		self.ypast = 0
 		self.zpast = 0
+		self.sendx = 0
+		self.sendy = 0
+		self.sendz = 0
+		self.arduino = 0
+
+	def serial(self):
+		self.arduino = serial.Serial('COM1', 115200, timeout=.1)
 
 	def start(self):
-		# define the lower and upper boundaries of the "green"
-		# ball in the HSV color space, then initialize the
-		# list of tracked points
 		ap = argparse.ArgumentParser()
 		ap.add_argument("-v", "--video",
 			help="path to the (optional) video file")
 		ap.add_argument("-b", "--buffer", type=int, default=64,
 			help="max buffer size")
 		args = vars(ap.parse_args())
+
+		# define the lower and upper boundaries of the "green"
+		# ball in the HSV color space, then initialize the
+		# list of tracked points
+		
 		greenLower = (29, 86, 6)
 		greenUpper = (64, 255, 255)
-		redLower = (160, 100, 100)
-		redUpper = (255, 0, 0)
+		# greenLower = (250, 0, 0)
+		# greenUpper = (255, 100, 100)
+
 		pts = deque(maxlen=args["buffer"])
 
 		# if a video path was not supplied, grab the reference
@@ -98,6 +110,7 @@ class relativeMovement:
 				
 				M = cv2.moments(c)
 				center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+				#print(center)
 
 				# only proceed if the radius meets a minimum size
 				if radius > 10:
@@ -113,9 +126,18 @@ class relativeMovement:
 					self.xpast = x
 					self.ypast = y
 					self.zpast = radius
+
+					# Serial to send
+					self.sendx = center[0]
+					self.sendy = center[1]
+					# depth from 30 to 90
+					self.sendz = radius
+					print(center[0], center[1], self.sendz)
+					self.arduino.write(center[0] + ',' + center[1] + ',' +  self.sendz + "\n")
+					# 
 					# print(x,y,radius, self.xchange)
-					if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
-						print(self.xchange, self.ychange)
+					# if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
+					# 	print(self.xchange, self.ychange)
 
 			# elif len(redcnts) > 0:
 			# 	# find the largest contour in the mask, then use
