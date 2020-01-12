@@ -6,10 +6,12 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/include",
+                "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/src",
                 "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library_ID30",
+                "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                 "/home/yiyi/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "/home/yiyi/.platformio/packages/framework-arduino-avr/variants/mega",
-                "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                 "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                 "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                 "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
@@ -20,10 +22,12 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
+                    "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/include",
+                    "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/src",
                     "/home/yiyi/Documents/github/nwhack/nwhacks2020/robotic_arm/.pio/libdeps/megaatmega2560/Adafruit PWM Servo Driver Library_ID30",
+                    "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                     "/home/yiyi/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "/home/yiyi/.platformio/packages/framework-arduino-avr/variants/mega",
-                    "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                     "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                     "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                     "/home/yiyi/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
