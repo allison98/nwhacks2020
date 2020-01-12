@@ -42,7 +42,7 @@ class relativeMovement:
 		
 		greenLower = (29, 86, 6)
 		greenUpper = (64, 255, 255)
-		# greenLower = (250, 0, 0)
+		# greenLower = (250, 0, 0)q
 		# greenUpper = (255, 100, 100)
 
 		pts = deque(maxlen=args["buffer"])
@@ -50,8 +50,9 @@ class relativeMovement:
 		# if a video path was not supplied, grab the reference
 		# to the webcam
 		if not args.get("video", False):
-			vs = VideoStream(src=0).start()
-
+			vs = cv2.VideoCapture(0)
+			cap2 = cv2.VideoCapture(2)
+	
 		# otherwise, grab a reference to the video file
 		else:
 			vs = cv2.VideoCapture(args["video"])
@@ -62,8 +63,11 @@ class relativeMovement:
 		# keep looping
 		while True:
 			# grab the current frame
-			frame = vs.read()
-
+			ret, thirdframe = cap2.read()
+			ret, frame = vs.read()
+			ret, secondframe = vs.read()
+			
+			
 			# handle the frame from VideoCapture or VideoStream
 			frame = frame[1] if args.get("video", False) else frame
 
@@ -72,9 +76,14 @@ class relativeMovement:
 			if frame is None:
 				break
 
+
 			# resize the frame, blur it, and convert it to the HSV
 			# color space
 			frame = imutils.resize(frame, width=600)
+			secondframe = imutils.resize(frame, width=250)
+			thirdframe = imutils.resize(frame, width=600)
+
+
 			blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 			hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -101,6 +110,9 @@ class relativeMovement:
 			
 			center = None
 
+			#black the screen
+			cv2.rectangle(frame, (0,0), (600,500), (0,0,0), -1)
+
 			# only proceed if at least one contour was found
 			if len(cnts) > 0:
 				# find the largest contour in the mask, then use
@@ -118,7 +130,7 @@ class relativeMovement:
 					# draw the circle and centroid on the frame,
 					# then update the list of tracked points
 					cv2.circle(frame, (int(x), int(y)), int(radius),
-						(0, 255, 255), 2)
+						(102, 204, 0), -1)
 					cv2.circle(frame, center, 5, (0, 0, 255), -1)
 				
 					self.xchange = abs(self.xpast - x)
@@ -131,16 +143,10 @@ class relativeMovement:
 					# Serial to send
 					self.sendx = center[0]
 					self.sendy = center[1]
-					# depth from 30 to 90
 					self.sendz = radius
-					# print(center[0], center[1], self.sendz)
-
-					#30 to 100 depth
-					# 100 to 500 left rigt
-					# 100 to 300 up down
-					# while self.arduino.in_waiting:
-					buf = self.arduino.readline()
-					print(buf)
+				
+					# buf = self.arduino.readline()
+					# print(buf)
 
 					# 
 					# print(x,y,radius, self.xchange)
@@ -156,7 +162,7 @@ class relativeMovement:
 						# s = "100,111,070."
 						s = s.encode()
 						# while self.arduino.in_waiting:
-						self.arduino.write(s)
+						# self.arduino.write(s)
 
 					# 	print(self.xchange, self.ychange)
 
@@ -194,7 +200,11 @@ class relativeMovement:
 				cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 			# show the frame to our screen
-			cv2.imshow("Frame", frame)
+			cv2.imshow("Control", cv2.flip( frame, 1 ))
+			cv2.imshow("Camera", cv2.flip( secondframe, 1 ))
+			cv2.imshow("ArmCamera", cv2.flip(thirdframe, 1 ))
+
+
 			key = cv2.waitKey(1) & 0xFF
 
 			# if the 'q' key is pressed, stop the loop
@@ -204,14 +214,16 @@ class relativeMovement:
 		# if we are not using a video file, stop the camera video stream
 		if not args.get("video", False):
 			vs.stop()
+			cap2.stop()
 
 		# otherwise, release the camera
 		else:
 			vs.release()
+			cap2.release()
 
 		# close all windows
 		cv2.destroyAllWindows()
 
 app = relativeMovement()
-app.serial()
+# app.serial()
 app.start()
