@@ -38,12 +38,12 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define USMAX  4*SERVOMAX // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
-#define MAX_X 500
-#define MAX_Y 300
-#define MAX_Z 100
-#define MIN_X 100
-#define MIN_Y 100
-#define MIN_Z 30
+#define MAX_X 600
+#define MAX_Y 400
+#define MAX_Z 90
+#define MIN_X 0
+#define MIN_Y 0
+#define MIN_Z 40
 
 
 // our servo # counter
@@ -110,13 +110,13 @@ void loop() {
 //  Serial.println(x);
 //    Serial.println(y);
 //  Serial.println(z);
-   int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
- int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
+   int yaw = 200+((400-200))*((double)(x)/(MAX_X-MIN_X));
+ int pitch = SERVOMIN+((SERVOMAX-SERVOMIN)*3)*((double)(y)/(MAX_Y-MIN_Y));
  int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
  
- Serial.println(gripper);
+// Serial.println(gripper);
    Serial.println(yaw);
- Serial.println(pitch);
+// Serial.println(pitch);
  
 //  Serial.println(serial);
  
@@ -149,68 +149,27 @@ void loop() {
   // Drive each servo one at a time using setPWM()
   //Serial.println(servonum);
 //  
-
-  servonum = 5;
-  pwm.setPWM(servonum, 0, gripper);
-//  if(gripper_old < gripper){
-//    for(int i = gripper_old; i < gripper; i ++) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
-//  else{
-//    for(int i = gripper_old; i > gripper; i --) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
+    
+    servonum = 5;
+    pwm.setPWM(servonum, 0, gripper);
 
     servonum = 0;
     pwm.setPWM(servonum, 0, yaw);
-//  if(yaw_old < yaw){
-//    for(int i = yaw_old; i < yaw; i ++) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
-//  else{
-//    for(int i = yaw_old; i > yaw; i --) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
-//  
+
     servonum = 2;
     pwm.setPWM(servonum, 0, pitch);
-//  if(pitch_old < pitch){
-//    for(int i = pitch_old; i < pitch; i ++) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
-//  else{
-//    for(int i = pitch_old; i > pitch; i --) 
-//    {
-//      pwm.setPWM(servonum, 0, i);
-//      delay(3);
-//    }
-//  }
-  
-  servonum = 1;
-  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
-  
-  servonum = 3;
-  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
 
   
-  yaw_old = yaw;
-  pitch_old = pitch;
-  gripper_old = gripper;
+    servonum = 1;
+    pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+  
+    servonum = 3;
+    pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+
+  
+    yaw_old = yaw;
+    pitch_old = pitch;
+    gripper_old = gripper;
 }
 
 /*

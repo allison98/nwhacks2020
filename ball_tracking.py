@@ -42,8 +42,6 @@ class relativeMovement:
 		
 		greenLower = (29, 86, 6)
 		greenUpper = (64, 255, 255)
-		# greenLower = (250, 0, 0)q
-		# greenUpper = (255, 100, 100)
 
 		pts = deque(maxlen=args["buffer"])
 
@@ -51,14 +49,14 @@ class relativeMovement:
 		# to the webcam
 		if not args.get("video", False):
 			vs = cv2.VideoCapture(0)
-			cap2 = cv2.VideoCapture(2)
 	
 		# otherwise, grab a reference to the video file
 		else:
 			vs = cv2.VideoCapture(args["video"])
+		cap2 = cv2.VideoCapture(1)
 
 		# allow the camera or video file to warm up
-		time.sleep(2.0)
+		time.sleep(3.0)
 
 		# keep looping
 		while True:
@@ -66,7 +64,6 @@ class relativeMovement:
 			ret, thirdframe = cap2.read()
 			ret, frame = vs.read()
 			ret, secondframe = vs.read()
-			
 			
 			# handle the frame from VideoCapture or VideoStream
 			frame = frame[1] if args.get("video", False) else frame
@@ -80,7 +77,7 @@ class relativeMovement:
 			# resize the frame, blur it, and convert it to the HSV
 			# color space
 			frame = imutils.resize(frame, width=600)
-			secondframe = imutils.resize(frame, width=250)
+			secondframe = imutils.resize(frame, width=500)
 			thirdframe = imutils.resize(frame, width=600)
 
 
@@ -145,12 +142,12 @@ class relativeMovement:
 					self.sendy = center[1]
 					self.sendz = radius
 				
-					# buf = self.arduino.readline()
-					# print(buf)
+					buf = self.arduino.readline()
+					print(buf)
 
 					# 
 					# print(x,y,radius, self.xchange)
-					if self.xchange > 2 or self.ychange > 2 and (self.xchange < 100 and self.ychange < 100):
+					if self.xchange > 2 or self.ychange > 2 and (self.xchange < 50 and self.ychange < 50):
 						s = "{0:0=3d}".format(int(center[0])) + ',' + "{0:0=3d}".format(int(center[1])) + ',' + "{0:0=3d}".format(int(radius)) + '.'
 						# print(s)
 						# print(s)
@@ -162,7 +159,7 @@ class relativeMovement:
 						# s = "100,111,070."
 						s = s.encode()
 						# while self.arduino.in_waiting:
-						# self.arduino.write(s)
+						self.arduino.write(s)
 
 					# 	print(self.xchange, self.ychange)
 
@@ -202,7 +199,7 @@ class relativeMovement:
 			# show the frame to our screen
 			cv2.imshow("Control", cv2.flip( frame, 1 ))
 			cv2.imshow("Camera", cv2.flip( secondframe, 1 ))
-			cv2.imshow("ArmCamera", cv2.flip(thirdframe, 1 ))
+			# cv2.imshow("ArmCamera", cv2.flip(thirdframe, 1 ))
 
 
 			key = cv2.waitKey(1) & 0xFF
@@ -225,5 +222,5 @@ class relativeMovement:
 		cv2.destroyAllWindows()
 
 app = relativeMovement()
-# app.serial()
+app.serial()
 app.start()
