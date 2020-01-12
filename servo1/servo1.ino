@@ -18,7 +18,7 @@
  ****************************************************/
 
 #include <Wire.h>
-//#include <String.h>
+#include <String.h>
 #include <Adafruit_PWMServoDriver.h>
 
 // called this way, it uses the default address 0x40
@@ -65,69 +65,54 @@ void setup() {
   delay(10);
 }
 
-//// You can use this function if you'd like to set the pulse length in seconds
-//// e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. It's not precise!
-//void setServoPulse(uint8_t n, double pulse) {
-//  double pulselength;
-//  
-//  pulselength = 1000000;   // 1,000,000 us per second
-//  pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
-////  Serial.print(pulselength); Serial.println(" us per period"); 
-//  pulselength /= 4096;  // 12 bits of resolution
-////  Serial.print(pulselength); Serial.println(" us per bit"); 
-//  pulse *= 1000000;  // convert input seconds to us
-//  pulse /= pulselength;
-////  Serial.println(pulse);
-//  pwm.setPWM(n, 0, pulse);
-//
-//  
-////  char* serial = "1,2,3";
-//  
-//  int x = (int)(strtok(serial,","));
-//  int y = (int)(strtok(NULL,","));
-//  int z = (int)(strtok(NULL,","));
-//
-////  Serial.println(x);
-////  Serial.println(y);
-////  Serial.println(z);
-////  
-//}
+// You can use this function if you'd like to set the pulse length in seconds
+// e.g. setServoPulse(0, 0.001) is a ~1 millisecond pulse width. It's not precise!
+void setServoPulse(uint8_t n, double pulse) {
+  double pulselength;
+  
+  pulselength = 1000000;   // 1,000,000 us per second
+  pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
+//  Serial.print(pulselength); Serial.println(" us per period"); 
+  pulselength /= 4096;  // 12 bits of resolution
+//  Serial.print(pulselength); Serial.println(" us per bit"); 
+  pulse *= 1000000;  // convert input seconds to us
+  pulse /= pulselength;
+//  Serial.println(pulse);
+  pwm.setPWM(n, 0, pulse);  
+}
 
 int yaw_old = 0;
 int pitch_old = 0;
 int gripper_old = 0;
 
 void loop() {
-//  char buff = [100];
-//  char* serial = Serial.readString().toCharArray();
-//
-////  char* serial = "100,75,100";
-//
-//  
-//  Serial.println(serial);
-//   if(Serial.available() > 0) {
-//    char data = Serial.read();
-//    char str[2];
-//    str[0] = data;
-//    str[1] = '\0';
-//    Serial.print(str);
-//  }
-//  
-//String A = "1,2,3";
-char* serial;
-//A.toCharArray(serial, 5);
 
-Serial.println(serial);
+ // String test = "100,75,100";
+  String test = Serial.readString();
+
+  Serial.println(test);
+
+  char serial[50];
+  test.toCharArray(serial, test.length()+1);
+
+  
+  Serial.println(serial);
   
   int x = (int)(strtok(serial,","))[0]-'0';
   int y = (int)(strtok(NULL,","))[0]-'0';
   int z = (int)(strtok(NULL,","))[0]-'0';
-////
-//  Serial.println(x);
-//  Serial.println(y);
-//  Serial.println(z);
+
+  if (x < 0 || y < 0 || z < 0) {
+    x = 0;
+    y = 0;
+    z = 0;
+  }
+
+  Serial.println(x);
+  Serial.println(y);
+  Serial.println(z);
   
-  //Get hand position
+//  Get hand position
 //  x = getX();
 //  y = getY();
 //  z = getZ();
