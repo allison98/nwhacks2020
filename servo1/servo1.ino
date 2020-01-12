@@ -50,7 +50,9 @@ uint8_t servonum = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("8 channel Servo test!");
+
+  
+//  Serial.println("8 channel Servo test!");
 
   pwm.begin();
   // In theory the internal oscillator is 25MHz but it really isn't
@@ -69,27 +71,54 @@ void setServoPulse(uint8_t n, double pulse) {
   
   pulselength = 1000000;   // 1,000,000 us per second
   pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
-  Serial.print(pulselength); Serial.println(" us per period"); 
+//  Serial.print(pulselength); Serial.println(" us per period"); 
   pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
+//  Serial.print(pulselength); Serial.println(" us per bit"); 
   pulse *= 1000000;  // convert input seconds to us
   pulse /= pulselength;
-  Serial.println(pulse);
+//  Serial.println(pulse);
   pwm.setPWM(n, 0, pulse);
+
+  
+  char* serial = "1,2,3";
+  
+  int x = (int)(strtok(serial,","));
+  int y = (int)(strtok(NULL,","));
+  int z = (int)(strtok(NULL,","));
+
+  Serial.println(x);
+  Serial.println(y);
+  Serial.println(z);
+  
 }
+
+int yaw_old = 0;
+int pitch_old = 0;
+int gripper_old = 0;
 
 void loop() {
 
-//  String serial = Serial.read();
+//  char* serial = Serial.readString().toCharArray();
 
-//  x = 
+//  char* serial = "100,75,100";
+
+  
+//  Serial.println(serial);
+//  
+//  int x = (int)(strtok(serial,","))[0]-'0';
+//  int y = (int)(strtok(NULL,","))[0]-'0';
+//  int z = (int)(strtok(NULL,","))[0]-'0';
+//
+//  Serial.println(x);
+//  Serial.println(y);
+//  Serial.println(z);
   
   //Get hand position
 //  x = getX();
 //  y = getY();
 //  z = getZ();
 
-int x = 0;
+int x = 100;
 int y = 50;
 int z = 50;
 
@@ -103,19 +132,63 @@ int z = 50;
   //Serial.println(servonum);
   
   servonum = 5;
-  pwm.setPWM(servonum, 0, gripper);
+  if(gripper_old < gripper){
+    for(int i = gripper_old; i < gripper; i ++) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
+  else{
+    for(int i = gripper_old; i > gripper; i --) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
 
   servonum = 0;
-  pwm.setPWM(servonum, 0, yaw);
+  if(yaw_old < yaw){
+    for(int i = yaw_old; i < yaw; i ++) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
+  else{
+    for(int i = yaw_old; i > yaw; i --) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
   
   servonum = 2;
-  pwm.setPWM(servonum, 0, pitch);
+  if(pitch_old < pitch){
+    for(int i = pitch_old; i < pitch; i ++) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
+  else{
+    for(int i = pitch_old; i > pitch; i --) 
+    {
+      pwm.setPWM(servonum, 0, i);
+      delay(3);
+    }
+  }
   
   servonum = 1;
   pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
   
   servonum = 3;
   pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+
+  
+  yaw_old = yaw;
+  pitch_old = pitch;
+  gripper_old = gripper;
 }
 
 /*
