@@ -25,7 +25,8 @@ class relativeMovement:
 		self.arduino = 0
 
 	def serial(self):
-		self.arduino = serial.Serial('COM1', 115200, timeout=.1)
+		#pass
+		self.arduino = serial.Serial('COM5', 9600, timeout=.1)
 
 	def start(self):
 		ap = argparse.ArgumentParser()
@@ -41,28 +42,29 @@ class relativeMovement:
 		
 		greenLower = (29, 86, 6)
 		greenUpper = (64, 255, 255)
-		# greenLower = (250, 0, 0)
-		# greenUpper = (255, 100, 100)
 
 		pts = deque(maxlen=args["buffer"])
 
 		# if a video path was not supplied, grab the reference
 		# to the webcam
 		if not args.get("video", False):
-			vs = VideoStream(src=0).start()
-
+			vs = cv2.VideoCapture(0)
+	
 		# otherwise, grab a reference to the video file
 		else:
 			vs = cv2.VideoCapture(args["video"])
+		cap2 = cv2.VideoCapture(1)
 
 		# allow the camera or video file to warm up
-		time.sleep(2.0)
+		time.sleep(3.0)
 
 		# keep looping
 		while True:
 			# grab the current frame
-			frame = vs.read()
-
+			ret, thirdframe = cap2.read()
+			ret, frame = vs.read()
+			ret, secondframe = vs.read()
+			
 			# handle the frame from VideoCapture or VideoStream
 			frame = frame[1] if args.get("video", False) else frame
 
@@ -71,9 +73,14 @@ class relativeMovement:
 			if frame is None:
 				break
 
+
 			# resize the frame, blur it, and convert it to the HSV
 			# color space
 			frame = imutils.resize(frame, width=600)
+			secondframe = imutils.resize(frame, width=500)
+			thirdframe = imutils.resize(frame, width=600)
+
+
 			blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 			hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -100,6 +107,9 @@ class relativeMovement:
 			
 			center = None
 
+			#black the screen
+			cv2.rectangle(frame, (0,0), (600,500), (0,0,0), -1)
+
 			# only proceed if at least one contour was found
 			if len(cnts) > 0:
 				# find the largest contour in the mask, then use
@@ -117,7 +127,7 @@ class relativeMovement:
 					# draw the circle and centroid on the frame,
 					# then update the list of tracked points
 					cv2.circle(frame, (int(x), int(y)), int(radius),
-						(0, 255, 255), 2)
+						(102, 204, 0), -1)
 					cv2.circle(frame, center, 5, (0, 0, 255), -1)
 				
 					self.xchange = abs(self.xpast - x)
@@ -130,13 +140,27 @@ class relativeMovement:
 					# Serial to send
 					self.sendx = center[0]
 					self.sendy = center[1]
-					# depth from 30 to 90
 					self.sendz = radius
-					print(center[0], center[1], self.sendz)
-					self.arduino.write(center[0] + ',' + center[1] + ',' +  self.sendz + "\n")
+				
+					buf = self.arduino.readline()
+					print(buf)
+
 					# 
 					# print(x,y,radius, self.xchange)
-					# if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
+					if self.xchange > 2 or self.ychange > 2 and (self.xchange < 50 and self.ychange < 50):
+						s = "{0:0=3d}".format(int(center[0])) + ',' + "{0:0=3d}".format(int(center[1])) + ',' + "{0:0=3d}".format(int(radius)) + '.'
+						# print(s)
+						# print(s)
+						# s = "100,111,122."
+						# s = s.encode()
+						# # while self.arduino.in_waiting:
+						# self.arduino.write(s)
+						# time.sleep(0.01)
+						# s = "100,111,070."
+						s = s.encode()
+						# while self.arduino.in_waiting:
+						self.arduino.write(s)
+
 					# 	print(self.xchange, self.ychange)
 
 			# elif len(redcnts) > 0:
@@ -173,7 +197,11 @@ class relativeMovement:
 				cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 			# show the frame to our screen
-			cv2.imshow("Frame", frame)
+			cv2.imshow("Control", cv2.flip( frame, 1 ))
+			cv2.imshow("Camera", cv2.flip( secondframe, 1 ))
+			# cv2.imshow("ArmCamera", cv2.flip(thirdframe, 1 ))
+
+
 			key = cv2.waitKey(1) & 0xFF
 
 			# if the 'q' key is pressed, stop the loop
@@ -183,13 +211,16 @@ class relativeMovement:
 		# if we are not using a video file, stop the camera video stream
 		if not args.get("video", False):
 			vs.stop()
+			cap2.stop()
 
 		# otherwise, release the camera
 		else:
 			vs.release()
+			cap2.release()
 
 		# close all windows
 		cv2.destroyAllWindows()
 
 app = relativeMovement()
+app.serial()
 app.start()
