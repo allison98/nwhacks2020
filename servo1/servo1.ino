@@ -86,16 +86,18 @@ int pitch_old = 0;
 int gripper_old = 0;
 
 void loop() {
-
+  char serial[20];
  // String test = "100,75,100";
+ if(Serial.available() > 0) {
   String test = Serial.readString();
+ 
 
-  Serial.println(test);
+  Serial.println("hello");
 
-  char serial[50];
+
   test.toCharArray(serial, test.length()+1);
 
-  
+ }
   Serial.println(serial);
   
   int x = (int)(strtok(serial,","))[0]-'0';
@@ -108,10 +110,10 @@ void loop() {
     z = 0;
   }
 
-  Serial.println(x);
-  Serial.println(y);
-  Serial.println(z);
-  
+//  Serial.println(x);
+//  Serial.println(y);
+//  Serial.println(z);
+//  
 //  Get hand position
 //  x = getX();
 //  y = getY();
@@ -130,53 +132,53 @@ void loop() {
   // Drive each servo one at a time using setPWM()
   //Serial.println(servonum);
   
-  servonum = 5;
-  if(gripper_old < gripper){
-    for(int i = gripper_old; i < gripper; i ++) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
-  else{
-    for(int i = gripper_old; i > gripper; i --) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
-
-  servonum = 0;
-  if(yaw_old < yaw){
-    for(int i = yaw_old; i < yaw; i ++) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
-  else{
-    for(int i = yaw_old; i > yaw; i --) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
-  
-  servonum = 2;
-  if(pitch_old < pitch){
-    for(int i = pitch_old; i < pitch; i ++) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
-  else{
-    for(int i = pitch_old; i > pitch; i --) 
-    {
-      pwm.setPWM(servonum, 0, i);
-      delay(3);
-    }
-  }
+//  servonum = 5;
+//  if(gripper_old < gripper){
+//    for(int i = gripper_old; i < gripper; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = gripper_old; i > gripper; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//
+//  servonum = 0;
+//  if(yaw_old < yaw){
+//    for(int i = yaw_old; i < yaw; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = yaw_old; i > yaw; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  
+//  servonum = 2;
+//  if(pitch_old < pitch){
+//    for(int i = pitch_old; i < pitch; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = pitch_old; i > pitch; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
   
   servonum = 1;
   pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);

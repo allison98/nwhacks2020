@@ -26,7 +26,7 @@ class relativeMovement:
 
 	def serial(self):
 		#pass
-		self.arduino = serial.Serial('COM5', 115200, timeout=.1)
+		self.arduino = serial.Serial('COM5', 9600, timeout=.1)
 
 	def start(self):
 		ap = argparse.ArgumentParser()
@@ -133,16 +133,20 @@ class relativeMovement:
 					self.sendy = center[1]
 					# depth from 30 to 90
 					self.sendz = radius
-					print(center[0], center[1], self.sendz)
+					# print(center[0], center[1], self.sendz)
 
 					#30 to 100 depth
 					# 100 to 500 left rigt
 					# 100 to 300 up down
-
+					
+					buf =self.arduino.readline()
+					print(buf)
 					# 
 					# print(x,y,radius, self.xchange)
 					if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
-						s = str(center[0]) + ',' + str(center[1]) + ',' +  str(self.sendz)
+						s = str(int(center[0])) + ',' + str(int(center[1])) + ',' +  str(int(self.sendz)) + '\0'
+						# print(s)
+						s = "100,100,100\0"
 						s = s.encode()
 						self.arduino.write(s)
 
