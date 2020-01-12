@@ -25,7 +25,8 @@ class relativeMovement:
 		self.arduino = 0
 
 	def serial(self):
-		self.arduino = serial.Serial('COM1', 115200, timeout=.1)
+		#pass
+		self.arduino = serial.Serial('COM5', 115200, timeout=.1)
 
 	def start(self):
 		ap = argparse.ArgumentParser()
@@ -133,10 +134,18 @@ class relativeMovement:
 					# depth from 30 to 90
 					self.sendz = radius
 					print(center[0], center[1], self.sendz)
-					self.arduino.write(center[0] + ',' + center[1] + ',' +  self.sendz + "\n")
+
+					#30 to 100 depth
+					# 100 to 500 left rigt
+					# 100 to 300 up down
+
 					# 
 					# print(x,y,radius, self.xchange)
-					# if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
+					if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
+						s = str(center[0]) + ',' + str(center[1]) + ',' +  str(self.sendz)
+						s = s.encode()
+						self.arduino.write(s)
+
 					# 	print(self.xchange, self.ychange)
 
 			# elif len(redcnts) > 0:
@@ -192,4 +201,5 @@ class relativeMovement:
 		cv2.destroyAllWindows()
 
 app = relativeMovement()
+app.serial()
 app.start()
