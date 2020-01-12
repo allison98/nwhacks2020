@@ -141,13 +141,19 @@ class relativeMovement:
 					# while self.arduino.in_waiting:
 					buf = self.arduino.readline()
 					print(buf)
+
 					# 
 					# print(x,y,radius, self.xchange)
-					if self.xchange > 5 or self.ychange > 5 and (self.xchange < 100 and self.ychange < 100):
+					if self.xchange > 2 or self.ychange > 2 and (self.xchange < 100 and self.ychange < 100):
 						s = "{0:0=3d}".format(int(center[0])) + ',' + "{0:0=3d}".format(int(center[1])) + ',' + "{0:0=3d}".format(int(radius)) + '.'
 						# print(s)
 						# print(s)
-						s = "100,111,122."
+						# s = "100,111,122."
+						# s = s.encode()
+						# # while self.arduino.in_waiting:
+						# self.arduino.write(s)
+						# time.sleep(0.01)
+						# s = "100,111,070."
 						s = s.encode()
 						# while self.arduino.in_waiting:
 						self.arduino.write(s)

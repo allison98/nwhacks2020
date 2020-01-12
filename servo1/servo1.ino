@@ -84,61 +84,43 @@ void setServoPulse(uint8_t n, double pulse) {
 int yaw_old = 0;
 int pitch_old = 0;
 int gripper_old = 0;
-
-void loop() {
-  char serial[20];
- // String test = "100,75,100";
-
   int x = 0;
   int y = 0;
   int z = 0;
 
- if(Serial.available() > 0) {
+ 
+void loop() {
+  char serial[20];
+ // String test = "100,75,100";
+//    Serial.println("loop");
+
+ while(Serial.available() == 0) {
+ }
   char c[2];
   Serial.readBytes(serial, 12);
-//  
-//  c[0] = serial[0];
-//  c[1] = serial[1];
-//  c[2] = serial[2];
-//  
-//  int index = 0;
-//  char c = serial[0:2];
-//  char d = serial[4:6];
-//  Serial.print(serial[0]);
-//    Serial.print(serial[1]);
-//    Serial.print(serial[2]);
    c[0] = serial[0];
    c[1] = serial[1];
   c[2] = serial[2];
   
-  int x = (c[0]-'0')*100 + (c[1]-'0')*10 + (c[2]-'0')*1;
-  int y = (serial[4]-'0')*100 + (serial[5]-'0')*10 + (serial[6]-'0')*1;
-  int z = (serial[8]-'0')*100 + (serial[9]-'0')*10 + (serial[10]-'0')*1;
-  Serial.println(x);
-    Serial.println(y);
-  Serial.println(z);
+  x = (c[0]-'0')*100 + (c[1]-'0')*10 + (c[2]-'0')*1;
+  y = (serial[4]-'0')*100 + (serial[5]-'0')*10 + (serial[6]-'0')*1;
+  z = (serial[8]-'0')*100 + (serial[9]-'0')*10 + (serial[10]-'0')*1;
+//    Serial.println("hello");
 
-
-
-//  Serial.println("hello");
-
+//  Serial.println(x);
+//    Serial.println(y);
+//  Serial.println(z);
+   int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
+ int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
+ int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
+ 
+ Serial.println(gripper);
+   Serial.println(yaw);
+ Serial.println(pitch);
+ 
 //  Serial.println(serial);
-
-//  test.toCharArray(serial, test.length()+1);
-
- }
-//  Serial.println(serial);
-  
-//  x = (int)(strtok(serial,","))[0]-'0';
-//  y = (int)(strtok(NULL,","))[0]-'0';
-//  z = (int)(strtok(NULL,","))[0]-'0';
-
-//  if (x < 0 || y < 0 || z < 0) {
-//    x = 0;
-//    y = 0;
-//    z = 0;
-//  }
-
+ 
+//
 //  Serial.println(x);
 //  Serial.println(y);
 //  Serial.println(z);
@@ -151,14 +133,14 @@ void loop() {
 //int x = 100;
 //int y = 50;
 //int z = 50;
-
-//  int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
-//  int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
-//  int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
-//  
-//  Serial.println(gripper);
-//    Serial.println(yaw);
-//  Serial.println(pitch);
+//
+// int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
+// int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
+// int gripper = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(z)/(MAX_Z-MIN_Z));
+// 
+// Serial.println(gripper);
+//   Serial.println(yaw);
+// Serial.println(pitch);
 //  Serial.println(x);
 //    Serial.println(y);
 //  Serial.println(z);
@@ -167,7 +149,9 @@ void loop() {
   // Drive each servo one at a time using setPWM()
   //Serial.println(servonum);
 //  
-//  servonum = 5;
+
+  servonum = 5;
+  pwm.setPWM(servonum, 0, gripper);
 //  if(gripper_old < gripper){
 //    for(int i = gripper_old; i < gripper; i ++) 
 //    {
@@ -182,8 +166,9 @@ void loop() {
 //      delay(3);
 //    }
 //  }
-//
-//  servonum = 0;
+
+    servonum = 0;
+    pwm.setPWM(servonum, 0, yaw);
 //  if(yaw_old < yaw){
 //    for(int i = yaw_old; i < yaw; i ++) 
 //    {
@@ -199,7 +184,8 @@ void loop() {
 //    }
 //  }
 //  
-//  servonum = 2;
+    servonum = 2;
+    pwm.setPWM(servonum, 0, pitch);
 //  if(pitch_old < pitch){
 //    for(int i = pitch_old; i < pitch; i ++) 
 //    {
@@ -214,17 +200,17 @@ void loop() {
 //      delay(3);
 //    }
 //  }
-//  
-//  servonum = 1;
-//  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
-//  
-//  servonum = 3;
-//  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
-//
-//  
-//  yaw_old = yaw;
-//  pitch_old = pitch;
-//  gripper_old = gripper;
+  
+  servonum = 1;
+  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+  
+  servonum = 3;
+  pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+
+  
+  yaw_old = yaw;
+  pitch_old = pitch;
+  gripper_old = gripper;
 }
 
 /*
