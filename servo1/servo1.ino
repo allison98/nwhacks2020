@@ -18,6 +18,7 @@
  ****************************************************/
 
 #include <Wire.h>
+#include <String.h>
 #include <Adafruit_PWMServoDriver.h>
 
 // called this way, it uses the default address 0x40
@@ -50,7 +51,9 @@ uint8_t servonum = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("8 channel Servo test!");
+
+  
+//  Serial.println("8 channel Servo test!");
 
   pwm.begin();
   // In theory the internal oscillator is 25MHz but it really isn't
@@ -69,29 +72,56 @@ void setServoPulse(uint8_t n, double pulse) {
   
   pulselength = 1000000;   // 1,000,000 us per second
   pulselength /= SERVO_FREQ;   // Analog servos run at ~60 Hz updates
-  Serial.print(pulselength); Serial.println(" us per period"); 
+//  Serial.print(pulselength); Serial.println(" us per period"); 
   pulselength /= 4096;  // 12 bits of resolution
-  Serial.print(pulselength); Serial.println(" us per bit"); 
+//  Serial.print(pulselength); Serial.println(" us per bit"); 
   pulse *= 1000000;  // convert input seconds to us
   pulse /= pulselength;
-  Serial.println(pulse);
-  pwm.setPWM(n, 0, pulse);
+//  Serial.println(pulse);
+  pwm.setPWM(n, 0, pulse);  
 }
 
+int yaw_old = 0;
+int pitch_old = 0;
+int gripper_old = 0;
+
 void loop() {
+  char serial[20];
+ // String test = "100,75,100";
+ if(Serial.available() > 0) {
+  String test = Serial.readString();
+ 
 
-//  String serial = Serial.read();
+  Serial.println("hello");
 
-//  x = 
+
+  test.toCharArray(serial, test.length()+1);
+
+ }
+  Serial.println(serial);
   
-  //Get hand position
+  int x = (int)(strtok(serial,","))[0]-'0';
+  int y = (int)(strtok(NULL,","))[0]-'0';
+  int z = (int)(strtok(NULL,","))[0]-'0';
+
+  if (x < 0 || y < 0 || z < 0) {
+    x = 0;
+    y = 0;
+    z = 0;
+  }
+
+//  Serial.println(x);
+//  Serial.println(y);
+//  Serial.println(z);
+//  
+//  Get hand position
 //  x = getX();
 //  y = getY();
 //  z = getZ();
 
-int x = 0;
-int y = 50;
-int z = 50;
+//int x = 100;
+//int y = 50;
+//int z = 50;
 
   int yaw = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(x)/(MAX_X-MIN_X));
   int pitch = SERVOMIN+(SERVOMAX-SERVOMIN)*((double)(y)/(MAX_Y-MIN_Y));
@@ -102,20 +132,64 @@ int z = 50;
   // Drive each servo one at a time using setPWM()
   //Serial.println(servonum);
   
-  servonum = 5;
-  pwm.setPWM(servonum, 0, gripper);
-
-  servonum = 0;
-  pwm.setPWM(servonum, 0, yaw);
-  
-  servonum = 2;
-  pwm.setPWM(servonum, 0, pitch);
+//  servonum = 5;
+//  if(gripper_old < gripper){
+//    for(int i = gripper_old; i < gripper; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = gripper_old; i > gripper; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//
+//  servonum = 0;
+//  if(yaw_old < yaw){
+//    for(int i = yaw_old; i < yaw; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = yaw_old; i > yaw; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  
+//  servonum = 2;
+//  if(pitch_old < pitch){
+//    for(int i = pitch_old; i < pitch; i ++) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
+//  else{
+//    for(int i = pitch_old; i > pitch; i --) 
+//    {
+//      pwm.setPWM(servonum, 0, i);
+//      delay(3);
+//    }
+//  }
   
   servonum = 1;
   pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
   
   servonum = 3;
   pwm.setPWM(servonum, 0, SERVOMIN+(SERVOMAX-SERVOMIN)*0.5);
+
+  
+  yaw_old = yaw;
+  pitch_old = pitch;
+  gripper_old = gripper;
 }
 
 /*
