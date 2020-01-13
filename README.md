@@ -31,3 +31,7 @@ The HelpingHand can be used with a variety of applications, with our simple desi
   ```python ball_tracking.py```
 - To test the hand gesture feature, install related libraries and run
   ```python main.py```
+
+[![Project Demonstration](https://img.youtube.com/vi/U9rnUuT0W4U/0.jpg)](https://www.youtube.com/watch?v=U9rnUuT0W4U&feature=emb_logo)
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YoxBQWCCZro/0.jpg)](https://www.youtube.com/watch?v=YoxBQWCCZro)
